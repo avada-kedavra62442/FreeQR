@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import QRCodeStyling from 'qr-code-styling';
 import { Camera } from 'lucide-react';
 import ScannerPage from './ScannerPage.jsx';
-import { CustomColorControl, InstallButton, FreeQRFooter } from './SiteChrome.jsx';
+import { CustomColorControl, InstallButton, FreeQRFooter, ThemeSelect } from './SiteChrome.jsx';
 import {
   ArrowDownToLine, ArrowRight, Check, ChevronDown, CircleHelp, Code2, Copy,
   Download, ExternalLink, FileImage, Globe2, Heart, ImagePlus, Mail, MapPin,
@@ -119,8 +119,8 @@ export default function App() {
     height: size,
     type: 'svg',
     data: payload || 'https://example.com',
-    margin: 18,
-    qrOptions: { errorCorrectionLevel: errorLevel },
+    margin: 32,
+    qrOptions: { errorCorrectionLevel: logo ? 'H' : errorLevel },
     dotsOptions: { color: foreground, type: dotStyle },
     backgroundOptions: { color: transparent ? 'rgba(255,255,255,0)' : background },
     cornersSquareOptions: { color: foreground, type: cornerStyle },
@@ -157,7 +157,7 @@ export default function App() {
     if (!file.type.startsWith('image/')) { setNotice('Choose an image file for your logo.'); return; }
     if (file.size > 5 * 1024 * 1024) { setNotice('Logo must be smaller than 5 MB.'); return; }
     const reader = new FileReader();
-    reader.onload = () => setLogo(String(reader.result || ''));
+    reader.onload = () => { setLogo(String(reader.result || '')); setErrorLevel('H'); };
     reader.readAsDataURL(file);
   };
 
@@ -197,7 +197,7 @@ export default function App() {
     const f = fields[type];
     switch (type) {
       case 'url': return <Field label="Website address" hint="Include any page, form, social profile, or link."><Input value={f.url} onChange={(v) => updateField('url', v)} placeholder="https://yourwebsite.com" type="url" /></Field>;
-      case 'wifi': return <><Field label="Network name (SSID)"><Input value={f.network} onChange={(v) => updateField('network', v)} placeholder="Your Wi-Fi name" autoComplete="off" /></Field><Field label="Password"><Input value={f.password} onChange={(v) => updateField('password', v)} placeholder="Wi-Fi password" type="text" autoComplete="off" /></Field><Field label="Security"><select value={f.encryption} onChange={(e) => updateField('encryption', e.target.value)}><option value="WPA">WPA / WPA2 / WPA3</option><option value="WEP">WEP</option><option value="nopass">No password</option></select></Field><label className="check-field"><input type="checkbox" checked={f.hidden} onChange={(e) => updateField('hidden', e.target.checked)} /> Hidden network</label></>;
+      case 'wifi': return <><Field label="Network name (SSID)"><Input value={f.network} onChange={(v) => updateField('network', v)} placeholder="Your Wi-Fi name" autoComplete="off" /></Field><Field label="Password"><Input value={f.password} onChange={(v) => updateField('password', v)} placeholder="Wi-Fi password" type="text" autoComplete="off" /></Field><Field label="Security"><ThemeSelect value={f.encryption} onChange={v => updateField('encryption', v)} ariaLabel="Wi-Fi security" options={[{value:'WPA',label:'WPA / WPA2 / WPA3'},{value:'WEP',label:'WEP'},{value:'nopass',label:'No password'}]} /></Field><label className="check-field"><input type="checkbox" checked={f.hidden} onChange={(e) => updateField('hidden', e.target.checked)} /> Hidden network</label></>;
       case 'text': return <Field label="Your message"><textarea rows="5" value={f.text} onChange={(v) => updateField('text', v)} placeholder="Type something worth sharing…" /></Field>;
       case 'email': return <><Field label="Recipient email"><Input value={f.email} onChange={(v) => updateField('email', v)} placeholder="hello@example.com" type="email" /></Field><Field label="Subject (optional)"><Input value={f.subject} onChange={(v) => updateField('subject', v)} placeholder="Let's talk" /></Field><Field label="Message (optional)"><textarea rows="3" value={f.body} onChange={(v) => updateField('body', v)} placeholder="Write a message…" /></Field></>;
       case 'phone': return <Field label="Phone number"><Input value={f.phone} onChange={(v) => updateField('phone', v)} placeholder="+1 555 123 4567" type="tel" /></Field>;
@@ -278,8 +278,8 @@ export default function App() {
                   </div>
                   {!payload && <div className="preview-empty"><span><Sparkles size={15} /></span><p>Your QR code is waiting.</p><small>Fill in the details to bring it to life.</small></div>}
                 </div>
-                <div className="preview-meta"><div><span className="meta-label">TYPE</span><b>{currentType.label}</b></div><div><span className="meta-label">ERROR CORRECTION</span><b>{errorLevel} · {({L:'Low',M:'Medium',Q:'Quartile',H:'High'})[errorLevel]}</b></div><div><span className="meta-label">SIZE</span><b>{size}px</b></div></div>
-                <div className="download-area"><div className="download-title"><div><Download size={17} /><b>Take it with you.</b></div><span>READY WHEN YOU ARE</span></div><div className="download-controls"><div className="format-select"><FileImage size={16} /><select value={downloadFormat} onChange={(e) => setDownloadFormat(e.target.value)}><option value="png">PNG image</option><option value="svg">SVG vector</option><option value="jpeg">JPEG image</option><option value="webp">WebP image</option></select><ChevronDown size={13} /></div><button className="download-button" onClick={() => download()} disabled={!payload}><Download size={16} /> Download QR <ArrowRight size={15} /></button></div><button className="copy-content" onClick={copyPayload} disabled={!payload}><Copy size={13} /> Copy encoded content</button></div>
+                <div className="preview-meta"><div><span className="meta-label">TYPE</span><b>{currentType.label}</b></div><div><span className="meta-label">ERROR CORRECTION</span><b>{logo ? 'H · High (logo-safe)' : `${errorLevel} · ${{L:'Low',M:'Medium',Q:'Quartile',H:'High'}[errorLevel]}`}</b></div><div><span className="meta-label">SIZE</span><b>{size}px</b></div></div>
+                <div className="download-area"><div className="download-title"><div><Download size={17} /><b>Take it with you.</b></div><span>READY WHEN YOU ARE</span></div><div className="download-controls"><div className="format-select"><FileImage size={16} /><ThemeSelect value={downloadFormat} onChange={setDownloadFormat} ariaLabel="Download format" options={[{value:'png',label:'PNG image'},{value:'svg',label:'SVG vector'},{value:'jpeg',label:'JPEG image'},{value:'webp',label:'WebP image'}]} /><ChevronDown size={13} /></div><button className="download-button" onClick={() => download()} disabled={!payload}><Download size={16} /> Download QR <ArrowRight size={15} /></button></div><button className="copy-content" onClick={copyPayload} disabled={!payload}><Copy size={13} /> Copy encoded content</button></div>
               </div>
               <div className="preview-footnote"><ShieldCheck size={16} /><span><b>Made in your browser.</b> Your content isn't sent to a server. Ever.</span><span className="footnote-spark">✳</span></div>
             </div>
