@@ -70,7 +70,7 @@ function makePayload(type, f) {
       if (!clean(f.title) || !clean(f.start)) return '';
       const toICS = (v) => v ? new Date(v).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z') : '';
       const esc = (v = '') => String(v).replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
-      return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//FreeQR//QR Event//EN', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT', 'UID:' + (globalThis.crypto?.randomUUID?.() || (Date.now() + '@freeqr.local')), 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z'), 'SUMMARY:' + esc(f.title), 'DTSTART:' + toICS(f.start), f.end ? 'DTEND:' + toICS(f.end) : '', f.location ? 'LOCATION:' + esc(f.location) : '', f.description ? 'DESCRIPTION:' + esc(f.description) : '', 'END:VEVENT', 'END:VCALENDAR'].filter(Boolean).join('\\r\\n');
+      return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//FreeQR//QR Event//EN', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT', 'UID:' + (globalThis.crypto?.randomUUID?.() || (Date.now() + '@freeqr.local')), 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z'), 'SUMMARY:' + esc(f.title), 'DTSTART:' + toICS(f.start), f.end ? 'DTEND:' + toICS(f.end) : '', f.location ? 'LOCATION:' + esc(f.location) : '', f.description ? 'DESCRIPTION:' + esc(f.description) : '', 'END:VEVENT', 'END:VCALENDAR'].filter(Boolean).join('\r\n');
     }
     default: return '';
   }
