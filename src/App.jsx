@@ -60,7 +60,7 @@ function makePayload(type, f) {
     case 'contact': {
       if (!clean(f.firstName) && !clean(f.lastName) && !clean(f.phone) && !clean(f.email)) return '';
       const fullName = [clean(f.firstName), clean(f.lastName)].filter(Boolean).join(' ');
-      return ['BEGIN:VCARD', 'VERSION:3.0', 'N:' + escapeVCard(f.lastName) + ';' + escapeVCard(f.firstName) + ';;;', 'FN:' + escapeVCard(fullName), f.organization ? 'ORG:' + escapeVCard(f.organization) : '', f.phone ? 'TEL;TYPE=CELL:' + escapeVCard(f.phone) : '', f.email ? 'EMAIL:' + escapeVCard(f.email) : '', f.website ? 'URL:' + escapeVCard(f.website) : '', 'END:VCARD'].filter(Boolean).join('\n');
+      return ['BEGIN:VCARD', 'VERSION:3.0', 'N:' + escapeVCard(f.lastName) + ';' + escapeVCard(f.firstName) + ';;;', 'FN:' + escapeVCard(fullName), f.organization ? 'ORG:' + escapeVCard(f.organization) : '', f.phone ? 'TEL;TYPE=CELL:' + escapeVCard(f.phone) : '', f.email ? 'EMAIL:' + escapeVCard(f.email) : '', f.website ? 'URL:' + escapeVCard(f.website) : '', 'END:VCARD'].filter(Boolean).join('\r\n');
     }
     case 'location': {
       if (f.latitude === '' || f.longitude === '' || !Number.isFinite(Number(f.latitude)) || !Number.isFinite(Number(f.longitude)) || Number(f.latitude) < -90 || Number(f.latitude) > 90 || Number(f.longitude) < -180 || Number(f.longitude) > 180) return '';
