@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import QRCodeStyling from 'qr-code-styling';
+import { Camera } from 'lucide-react';
+import ScannerPage from './ScannerPage.jsx';
+import { CustomColorControl, InstallButton, FreeQRFooter } from './SiteChrome.jsx';
 import {
   ArrowDownToLine, ArrowRight, Check, ChevronDown, CircleHelp, Code2, Copy,
   Download, ExternalLink, FileImage, Globe2, Heart, ImagePlus, Mail, MapPin,
@@ -44,7 +47,8 @@ function makePayload(type, f) {
     case 'wifi': {
       if (!clean(f.network)) return '';
       const esc = (v) => String(v ?? '').replace(/([\\;,:"])/g, '\\$1');
-      return 'WIFI:T:' + (f.encryption || 'WPA') + ';S:' + esc(f.network) + ';P:' + esc(f.password) + ';H:' + (f.hidden ? 'true' : 'false') + ';;';
+      const security = f.encryption || 'WPA';
+      return 'WIFI:T:' + security + ';S:' + esc(f.network) + ';' + (security === 'nopass' ? '' : 'P:' + esc(f.password) + ';') + 'H:' + (f.hidden ? 'true' : 'false') + ';;';
     }
     case 'text': return clean(f.text);
     case 'email': {
@@ -209,11 +213,11 @@ export default function App() {
     <div className="app-shell">
       <div className="ambient ambient-one" /><div className="ambient ambient-two" />
       <header className="topbar">
-        <a className="brand" href="#" aria-label="FreeQR home"><span className="brand-mark"><QrCode size={22} strokeWidth={2.3} /></span><span>Free<span className="brand-light">QR</span><small>QR STUDIO</small></span></a>
-        <nav className="top-links"><a href="#studio">Studio</a><a href="#how">How it works</a><a href="#promise">Our promise</a></nav>
-        <div className="top-actions"><span className="free-pill"><span /> Free forever</span><button className="mobile-menu" onClick={() => setMobileMenu(!mobileMenu)} aria-label="Toggle menu"><Menu size={20} /></button><a className="header-cta" href="#studio">Create a QR <ArrowRight size={15} /></a></div>
+        <a className="brand" href="/" aria-label="FreeQR home"><span className="brand-mark"><QrCode size={22} strokeWidth={2.3} /></span><span>Free<span className="brand-light">QR</span><small>QR STUDIO</small></span></a>
+        <nav className="top-links"><a href="#studio">Studio</a><a href="/scan">QR Scanner</a><a href="#how">How it works</a><a href="#promise">Our promise</a></nav>
+        <div className="top-actions"><span className="free-pill"><span /> Free forever</span><a className="scan-nav-button" href="/scan"><Camera size={14}/><span>Scan</span></a><InstallButton/><button className="mobile-menu" onClick={() => setMobileMenu(!mobileMenu)} aria-label="Toggle menu"><Menu size={20} /></button><a className="header-cta" href="#studio">Create a QR <ArrowRight size={15} /></a></div>
       </header>
-      {mobileMenu && <div className="mobile-nav"><a onClick={() => setMobileMenu(false)} href="#studio">Studio</a><a onClick={() => setMobileMenu(false)} href="#how">How it works</a><a onClick={() => setMobileMenu(false)} href="#promise">Our promise</a></div>}
+      {mobileMenu && <div className="mobile-nav"><a onClick={() => setMobileMenu(false)} href="#studio">Studio</a><a onClick={() => setMobileMenu(false)} href="/scan">QR Scanner</a><a onClick={() => setMobileMenu(false)} href="#how">How it works</a><a onClick={() => setMobileMenu(false)} href="#promise">Our promise</a></div>}
 
       <main>
         <section className="hero">
@@ -248,8 +252,8 @@ export default function App() {
                 <div className="privacy-note"><ShieldCheck size={16} /><span><b>Your content stays yours.</b> QR codes are generated in your browser.</span></div>
               </div> : <div className="editor-content design-content">
                 <div className="input-section-title">PERSONALIZE YOUR CODE<span>02</span></div>
-                <div className="design-group"><div className="design-label-row"><span>QR color</span><span className="color-value">{foreground.toUpperCase()}</span></div><div className="color-row"><input className="color-input" type="color" value={foreground} onChange={(e) => setForeground(e.target.value)} /><div className="swatches">{['#123e2e','#111827','#3b5ccc','#7c3aed','#be3455','#0f766e'].map(c => <button key={c} aria-label={'Set QR color '+c} className={foreground === c ? 'swatch active' : 'swatch'} style={{ background: c }} onClick={() => setForeground(c)} />)}</div></div></div>
-                <div className="design-group"><div className="design-label-row"><span>Background</span><span className="color-value">{transparent ? 'TRANSPARENT' : background.toUpperCase()}</span></div><div className="color-row"><input className="color-input" type="color" value={background} onChange={(e) => { setBackground(e.target.value); setTransparent(false); }} /><button className={transparent ? 'toggle-chip on' : 'toggle-chip'} onClick={() => setTransparent(!transparent)}><span /> Transparent</button></div></div>
+                <CustomColorControl label="QR color" value={foreground} onChange={setForeground} presets={['#123e2e','#0b2119','#111827','#3b5ccc','#7c3aed','#be3455','#0f766e','#f59e0b']} />
+                <div className="design-group"><CustomColorControl label="Background" value={background} onChange={v => { setBackground(v); setTransparent(false); }} presets={['#ffffff','#f4f7f5','#e8f0eb','#dbeafe','#fff7ed','#f3e8ff']} /><button className={transparent ? 'toggle-chip on' : 'toggle-chip'} onClick={() => setTransparent(!transparent)}><span /> Transparent background</button></div>
                 <div className="design-group"><span className="design-label">Dot style</span><div className="option-grid three">{[{v:'square',l:'Square'},{v:'dots',l:'Dots'},{v:'rounded',l:'Rounded'},{v:'classy',l:'Classy'},{v:'classy-rounded',l:'Soft classy'},{v:'extra-rounded',l:'Extra round'}].map(o => <button key={o.v} className={dotStyle === o.v ? 'option-button active' : 'option-button'} onClick={() => setDotStyle(o.v)}><span className={'dot-demo demo-'+o.v} />{o.l}</button>)}</div></div>
                 <div className="design-group"><span className="design-label">Corner style</span><div className="option-grid three">{[{v:'square',l:'Square'},{v:'dot',l:'Dot'},{v:'extra-rounded',l:'Rounded'}].map(o => <button key={o.v} className={cornerStyle === o.v ? 'option-button active' : 'option-button'} onClick={() => setCornerStyle(o.v)}><span className={'corner-demo corner-'+o.v} />{o.l}</button>)}</div></div>
                 <div className="design-group"><div className="design-label-row"><span>Error correction</span><span className="color-value">{errorLevel}</span></div><div className="option-grid four">{[{v:'L',l:'Low'},{v:'M',l:'Medium'},{v:'Q',l:'Quartile'},{v:'H',l:'High'}].map(o => <button key={o.v} className={errorLevel === o.v ? 'option-button active' : 'option-button'} onClick={() => setErrorLevel(o.v)}><b>{o.v}</b>{o.l}</button>)}</div><p className="micro-hint">Higher correction can help the code scan with a logo, but makes the pattern denser.</p></div>
@@ -283,7 +287,7 @@ export default function App() {
         <section className="promise-section" id="promise"><div className="promise-heading"><div className="eyebrow"><span className="eyebrow-line" /> THE FREEQR PROMISE</div><h2>Free means <span>free.</span></h2><p>Not free until you need the good stuff. Just free.</p></div><div className="promise-grid"><article><span className="promise-icon"><Heart size={19} /></span><h3>No account. Ever.</h3><p>No sign-up walls, no email gate, no hoops to jump through. Open the studio and get going.</p></article><article><span className="promise-icon"><ShieldCheck size={19} /></span><h3>No watermark. Ever.</h3><p>Your QR code belongs to you. We won't stamp our name on your work or clutter your design.</p></article><article><span className="promise-icon"><Sparkles size={19} /></span><h3>No premium QR.</h3><p>Every customization is here from the start. No surprise paywall after you've designed it.</p></article></div></section>
         <section className="how-section" id="how"><div><div className="eyebrow"><span className="eyebrow-line" /> THREE STEPS. THAT'S IT.</div><h2>From idea to <span>scan-ready.</span></h2></div><div className="how-steps"><article><span>01</span><h3>Choose what to share</h3><p>A link, Wi-Fi password, contact card, event, or anything in between.</p></article><article><span>02</span><h3>Make it yours</h3><p>Pick your colors, shape, logo, frame, and size. Watch the preview update live.</p></article><article><span>03</span><h3>Download. Done.</h3><p>Export your code and use it on cards, posters, packaging, or anywhere.</p></article></div></section>
       </main>
-      <footer className="site-footer"><a className="brand footer-brand" href="#"><span className="brand-mark"><QrCode size={20} /></span><span>Free<span className="brand-light">QR</span><small>QR STUDIO</small></span></a><p>Useful software. Without the nonsense.</p><div className="footer-right"><span>Made for everyone, free forever.</span><span>© {new Date().getFullYear()} FreeQR</span></div></footer>
+      <FreeQRFooter />
       {notice && <div className="toast" role="status"><Check size={16} />{notice}<button aria-label="Dismiss notification" onClick={() => setNotice('')}><X size={14} /></button></div>}
     </div>
   );
