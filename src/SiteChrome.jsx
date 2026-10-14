@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { ArrowRight, Check, ChevronDown, Download, Github, Linkedin, Mail, QrCode, Smartphone, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Check, ChevronDown, Download, Github, Linkedin, Mail, Smartphone, X } from 'lucide-react';
 
 function hslToHex(h, s = 72, l = 32) {
   s /= 100; l /= 100;
@@ -37,6 +37,23 @@ export function CustomColorControl({ label, value, onChange, presets }) {
       <button type="button" className="picker-done" onClick={()=>setOpen(false)}>Done <Check size={14}/></button>
     </div>}
   </div>;
+}
+
+
+export function ThemeSelect({ value, onChange, options, ariaLabel = 'Choose an option' }) {
+ const [open,setOpen]=useState(false);
+ const root=useRef(null);
+ useEffect(()=>{
+  const outside=e=>{if(root.current&&!root.current.contains(e.target))setOpen(false);};
+  const key=e=>{if(e.key==='Escape')setOpen(false);};
+  document.addEventListener('pointerdown',outside);document.addEventListener('keydown',key);
+  return ()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',key);};
+ },[]);
+ const current=options.find(o=>o.value===value)||options[0];
+ return <div className="theme-select" ref={root}>
+  <button type="button" className="theme-select-trigger" aria-label={ariaLabel} aria-haspopup="listbox" aria-expanded={open} onClick={()=>setOpen(v=>!v)}><span>{current?.label||value}</span><ChevronDown size={14} className={open?'picker-chevron open':'picker-chevron'}/></button>
+  {open&&<div className="theme-select-menu" role="listbox" aria-label={ariaLabel}>{options.map(o=><button type="button" role="option" aria-selected={o.value===value} className={o.value===value?'theme-select-option selected':'theme-select-option'} key={o.value} onClick={()=>{onChange(o.value);setOpen(false);}}><span>{o.label}</span>{o.value===value&&<Check size={14}/>}</button>)}</div>}
+ </div>;
 }
 
 export function InstallButton() {
