@@ -63,7 +63,7 @@ function makePayload(type, f) {
       return ['BEGIN:VCARD', 'VERSION:3.0', 'N:' + escapeVCard(f.lastName) + ';' + escapeVCard(f.firstName) + ';;;', 'FN:' + escapeVCard(fullName), f.organization ? 'ORG:' + escapeVCard(f.organization) : '', f.phone ? 'TEL;TYPE=CELL:' + escapeVCard(f.phone) : '', f.email ? 'EMAIL:' + escapeVCard(f.email) : '', f.website ? 'URL:' + escapeVCard(f.website) : '', 'END:VCARD'].filter(Boolean).join('\n');
     }
     case 'location': {
-      if (f.latitude === '' || f.longitude === '' || !Number.isFinite(Number(f.latitude)) || !Number.isFinite(Number(f.longitude))) return '';
+      if (f.latitude === '' || f.longitude === '' || !Number.isFinite(Number(f.latitude)) || !Number.isFinite(Number(f.longitude)) || Number(f.latitude) < -90 || Number(f.latitude) > 90 || Number(f.longitude) < -180 || Number(f.longitude) > 180) return '';
       return 'geo:' + Number(f.latitude) + ',' + Number(f.longitude) + (clean(f.label) ? '?q=' + encodeURIComponent(f.label) : '');
     }
     case 'calendar': {
