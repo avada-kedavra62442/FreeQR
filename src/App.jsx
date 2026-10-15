@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import QRCodeStyling from 'qr-code-styling';
 import { Camera } from 'lucide-react';
 import ScannerPage from './ScannerPage.jsx';
+import HomePage from './HomePage.jsx';
 import { CustomColorControl, InstallButton, FreeQRFooter, ThemeSelect } from './SiteChrome.jsx';
 import {
   ArrowDownToLine, ArrowRight, Check, ChevronDown, CircleHelp, Code2, Copy,
@@ -84,7 +85,7 @@ function Input({ value, onChange, placeholder, type = 'text', ...props }) {
   return <input type={type} value={value ?? ''} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} {...props} />;
 }
 
-export default function App() {
+function QRStudio() {
   const [type, setType] = useState('url');
   const [fields, setFields] = useState(initialFields);
   const [tab, setTab] = useState('content');
@@ -209,8 +210,6 @@ export default function App() {
     }
   };
 
-  if (window.location.pathname === '/scan') return <ScannerPage />;
-
   return (
     <div className="app-shell">
       <div className="ambient ambient-one" /><div className="ambient ambient-two" />
@@ -293,4 +292,12 @@ export default function App() {
       {notice && <div className="toast" role="status"><Check size={16} />{notice}<button aria-label="Dismiss notification" onClick={() => setNotice('')}><X size={14} /></button></div>}
     </div>
   );
+}
+
+
+export default function App() {
+  const path = window.location.pathname.replace(/\\/+$/, '') || '/';
+  if (path === '/scan') return <ScannerPage />;
+  if (path === '/create' || path === '/make') return <QRStudio />;
+  return <HomePage />;
 }
