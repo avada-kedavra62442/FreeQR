@@ -30,7 +30,7 @@ export default function ScannerPage() {
  const copyResult=async()=>{try{await navigator.clipboard.writeText(result);setError('Copied to clipboard.');}catch{setError('Clipboard access was blocked by your browser.');}};
  const isLink=/^https?:\/\//i.test(result);
  return <div className="app-shell scanner-shell"><div className="ambient ambient-one"/><div className="ambient ambient-two"/>
-  <header className="topbar"><a className="brand" href="/" aria-label="FreeQR home"><span className="brand-mark"><QrCode size={22}/></span><span>Free<span className="brand-light">QR</span><small>QR STUDIO</small></span></a><nav className="top-links"><a href="/">Studio</a><a href="/scan" aria-current="page">QR Scanner</a></nav><div className="top-actions"><span className="free-pill"><span/> Free forever</span><InstallButton/></div></header>
+  <header className="topbar"><a className="brand" href="/" aria-label="FreeQR home"><span className="brand-mark"><QrCode size={22}/></span><span>Free<span className="brand-light">QR</span><small>QR STUDIO</small></span></a><nav className="top-links"><a href="/create">Studio</a><a href="/scan" aria-current="page">QR Scanner</a></nav><div className="top-actions"><span className="free-pill"><span/> Free forever</span><InstallButton/></div></header>
   <main className="scanner-main"><a className="scanner-back" href="/"><ArrowRight size={15}/> Back to QR Studio</a>
    <div className="scanner-heading"><div className="eyebrow"><Camera size={14}/> PRIVATE, IN-BROWSER SCANNING</div><h1>Scan a QR.<br/><span>Reveal what’s inside.</span></h1><p>Use your camera or choose an image. Your scan stays on this device.</p></div>
    <div className="scanner-layout">
