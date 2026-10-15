@@ -13,9 +13,9 @@ export default function ScannerPage() {
   if(!navigator.mediaDevices?.getUserMedia){setError('Camera access needs HTTPS and a supported browser.');return;}
   try{
    const reader=new BrowserMultiFormatReader();readerRef.current=reader;
-   // Avoid listVideoInputDevices(): it is not available on every ZXing browser-reader version.
-   // Ask for the rear-facing camera directly and let the browser choose a compatible device.
-   const controls=await reader.decodeFromConstraints({video:{facingMode:{ideal:'environment'}},audio:false},videoRef.current,(decoded,_err,activeControls)=>{
+   // Do not enumerate cameras: some installed ZXing versions do not expose listVideoInputDevices.
+   // Passing an undefined device ID lets ZXing/browser choose the default available camera.
+   const controls=await reader.decodeFromVideoDevice(undefined,videoRef.current,(decoded,_err,activeControls)=>{
     if(decoded){setResult(decoded.getText());setScanning(false);activeControls?.stop();}
    });
    controlsRef.current=controls;setScanning(true);
