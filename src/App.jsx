@@ -296,7 +296,7 @@ function QRStudio() {
 
 
 export default function App() {
-  const path = window.location.pathname.replace(/\\/+$/, '') || '/';
+  const path = window.location.pathname;
   if (path === '/scan') return <ScannerPage />;
   if (path === '/create' || path === '/make') return <QRStudio />;
   return <HomePage />;
