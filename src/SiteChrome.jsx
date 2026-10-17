@@ -79,12 +79,15 @@ export function InstallButton() {
 }
 
 export function FreeQRFooter() {
- return <footer className="site-footer freeqr-footer"><div className="footer-main">
-  <div className="footer-brand"><div className="footer-brand-row"><img className="footer-favicon" src="/favicon.svg" alt="" aria-hidden="true"/><span className="footer-brand-name">Free<span>QR</span></span></div><p>Useful software.<br/>Without the nonsense.</p><div className="footer-status"><span className="status-dot"/>Building useful things</div>
-   <div className="footer-socials"><a href="https://github.com/avada-kedavra62442/" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="GitHub" title="GitHub"><Github size={18}/></a><a href="mailto:aarav.krish62442@gmail.com" className="footer-social-link" aria-label="Email" title="Email"><Mail size={18}/></a><a href="https://www.linkedin.com/in/aarav-krish-665702440/" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="LinkedIn" title="LinkedIn"><Linkedin size={18}/></a></div>
-  </div>
-  <div className="footer-column"><span className="footer-heading">PRODUCTS</span><a href="/create">FreeQR Studio</a><a href="/scan">QR Scanner</a></div>
-  <div className="footer-column"><span className="footer-heading">TOOLS</span><a href="/create">Create QR</a><a href="/scan">Scan QR</a><a href="/create">Wi-Fi QR</a><a href="/create">Contact QR</a><a href="/create">URL QR</a></div>
-  <div className="footer-column"><span className="footer-heading">MORE</span><a href="https://free-pdf-delta.vercel.app/" target="_blank" rel="noopener noreferrer">FreePDF</a><a href="mailto:aarav.krish62442@gmail.com?subject=FreeToolz%20Feedback">Send feedback</a><a href="mailto:aarav.krish62442@gmail.com?subject=FreeQR%20Privacy">Privacy &amp; contact</a></div>
- </div><div className="footer-bottom"><span>© {new Date().getFullYear()} FreeQR. All rights reserved.</span><span className="footer-line"/><span>BUILT FOR THE WEB · BUILT TO BE USEFUL</span></div></footer>;
+  return <footer className="ft-universal-footer">
+    <div className="ft-footer-main">
+      <div className="ft-footer-brand-block">
+        <a className="ft-footer-brand" href="/" aria-label="FreeQR home"><img className="ft-footer-mark" src="/favicon.svg" alt="" aria-hidden="true"/><span>Free<span className="ft-footer-accent">QR</span><small>FREE TOOLZ PROJECT</small></span></a>
+        <p>Useful software. Without the nonsense.</p><span className="ft-footer-status">● Building useful things</span>
+      </div>
+      <div className="ft-footer-column"><b>Products</b><a href="/">FreeQR</a><a href="https://free-toolz.vercel.app/">FreeToolz hub ↗</a></div>
+      <div className="ft-footer-column"><b>Tools &amp; information</b><a href="/#tools">Explore tools</a><a href="/#privacy">Privacy &amp; local processing</a><a href="mailto:aarav.krish62442@gmail.com?subject=FreeQR%20Feedback">Feedback</a></div>
+      <div className="ft-footer-column"><b>Connect</b><a href="https://github.com/avada-kedavra62442/FreeQR" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="mailto:aarav.krish62442@gmail.com">Email ↗</a><a href="https://www.linkedin.com/in/aarav-krish-665702440/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></div>
+    </div><div className="ft-footer-bottom"><span>© {new Date().getFullYear()} FreeToolz · FreeQR</span><span>FREE FOREVER · NO ADS · NO PAYWALLS</span></div>
+  </footer>;
 }
